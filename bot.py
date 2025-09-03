@@ -1,16 +1,16 @@
+import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ChatInviteLink
 from telegram.ext import (
-    Application, CommandHandler, CallbackQueryHandler,
-    MessageHandler, filters, ContextTypes
+    Application, CommandHandler, MessageHandler,
+    filters, ContextTypes
 )
-import os
 
 # Opslag in geheugen
 user_progress = {}       # {user_id: int} -> aantal succesvolle invites
 user_invite_links = {}   # {invite_link: inviter_id}
 
-# Groep links
-CURRENT_GROUP_ID = -1003031190193   # <-- Zet hier het chat_id van je huidige groep (numeriek ID!)
+# Zet je groeps-ID en private link hier
+CURRENT_GROUP_ID = -1003031190193   # <-- vervang door jouw echte group_id (numeriek ID!)
 PRIVATE_GROUP_LINK = "https://t.me/+4wUs0h5KhYI5MDQx"
 
 
@@ -78,7 +78,7 @@ async def new_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     reply_markup=InlineKeyboardMarkup(keyboard)
                 )
             except:
-                pass  # als DM niet werkt, gewoon negeren
+                pass  # Als DM niet werkt, gewoon negeren
 
 
 async def progress(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -115,7 +115,10 @@ async def progress(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
-    TOKEN = os.getenv("BOT_TOKEN")  # Zet je bot token in een env variabele
+    TOKEN = os.getenv("BOT_TOKEN")
+    if not TOKEN:
+        raise RuntimeError("BOT_TOKEN not set")
+
     app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
